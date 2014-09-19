@@ -1,0 +1,13 @@
+<div id="level_container" style="width:{{level.width}}px;height:{{level.height}}px;">
+	<div level="level" client="client" id="level_stage">
+		<div id="level_content">
+			<span action ng-repeat="a in level.actions" class="bit {{a.cls}}" style="width:{{level.gridSize}}px;height:{{level.gridSize}}px;top:{{a.cellY*level.gridSize}}px;left:{{a.cellX*level.gridSize}}px;{{a.fx}}"></span>
+			<span ng-repeat="b in level.bits" class="bit {{b.cls}} {{b.path}}" style="width:{{level.gridSize}}px;height:{{level.gridSize}}px;top: {{b.y}}px;left: {{b.x}}px;"></span>
+		</div>
+		<span ng-repeat="p in players" player="p" id="{{p.id}}" class="player" style="width:{{level.gridSize}}px;height:{{level.gridSize}}px;top:{{p.cellY*level.gridSize}}px;left:{{p.cellX*level.gridSize}}px;background:{{p.color}};line-height:{{level.gridSize}}px;"></span>
+	</div>
+	<!--div id="player_controls">
+		<a class="button" href="" title="Action"><span>A</span></a>
+		<a class="button light" href="" title="Defense"><span>D</span></a>
+	</div-->
+</div>
