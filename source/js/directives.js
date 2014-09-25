@@ -10,7 +10,7 @@ angular.module('myApp.directives', []).
 				player : '='
 			},
 			link : function(scope, element, attrs) {
-				if (typeof scope.player.client !== 'typeof' && scope.player.client === true) {
+				if (typeof scope.player.client !== 'undefined' && scope.player.client === true) {
 					$rootScope.$broadcast('registerClient', {client : scope.player});
 				}
 			}
@@ -21,17 +21,21 @@ angular.module('myApp.directives', []).
 		return function(scope, element, attrs) {
 			var s = scope;
 
-			setTimeout(function() {
+			s.a.fx = 'border-color:' + s.a.color + ';border-width:' + s.a.borderSize + 'px;';
+
+			s._toId = window.setTimeout(function() {
 				utils.hitTest({
 					x : s.a.cellX,
 					y : s.a.cellY,
 					diameter : s.a.cellSize,
-					grids : [scope.level.bits]
+					grids : [scope.level.bits, scope.players],
+					ignore : {
+						path : true,
+						cls : 'static'
+					}
 				}, function(hit) {
-					// hit test will only return cells that have path == false
 					$rootScope.$broadcast('actionHit', {
 						type : 'bomb',
-						source : s.a,
 						hit : hit
 					});
 				});
@@ -39,7 +43,13 @@ angular.module('myApp.directives', []).
 				s.a.fx = 'box-shadow: 0 ' + s.a.size + 'px 0px 0px ' + s.a.color + ', ' + s.a.size + 'px 0 0px 0px ' + s.a.color + ', 0 -' + s.a.size + 'px 0px 0px ' + s.a.color + ', -' + s.a.size + 'px 0 0px 0px ' + s.a.color + ';';
 				element.addClass('fire');
 				s.$apply();
-			}, 1000);
+
+				s.a.path = true;
+
+				$rootScope.$broadcast('actionReplenish', {
+					client : s.a.client
+				});
+			}, s.a.delay);
 		}
 	}]).
 
@@ -52,111 +62,170 @@ angular.module('myApp.directives', []).
 			link : function(scope, element, attrs) {
 				var hmEl = new Hammer(element[0]);
 					gridSize = scope.level.gridSize,
-					levelOffset = null,
 					tempCellX = 0,
 					tempCellY = 0,
 					tempTapX = 0,
 					tempTapY = 0,
 					oldDeltaCellX = 0,
 					oldDeltaCellY = 0,
-					hitObj = {},
 					actionStyle = '';
 
 				hmEl.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 				hmEl.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
 
+				function getCell(x, y) {
+					var	levelOffset = $('#level_content').offset(),
+						tapX = (x-levelOffset.left) / scope.level.gridSize,
+						tapY = (y-levelOffset.top) / scope.level.gridSize;
+
+					if (tapX > scope.client.cellX + 1) {
+						tapX = Math.ceil(tapX) - 1;
+					} else if (tapX < scope.client.cellX) {
+						tapX = Math.floor(tapX);
+					} else {
+						tapX = scope.client.cellX;
+					}
+
+					if (tapY > scope.client.cellY + 1) {
+						tapY = Math.ceil(tapY) - 1;
+					} else if (tapY < scope.client.cellY) {
+						tapY = Math.floor(tapY);
+					} else {
+						tapY = scope.client.cellY;
+					}
+
+					return {
+						x : tapX,
+						y : tapY
+					};
+				}
+
 				var moveFunc = function(e) {
-					var curTapCellX = Math.round(e.center.x / scope.level.gridSize),
-						curTapCellY = Math.round(e.center.y / scope.level.gridSize), 
-						deltaCellX =  curTapCellX - tempTapX,
-						deltaCellY =  curTapCellY - tempTapY,
+					// Pan is not working quite right, cant pan up or left
+					var cell = getCell(e.center.x, e.center.y),
+						deltaCellX =  cell.x - tempTapX,
+						deltaCellY =  cell.y - tempTapY,
 						cellX = tempCellX + deltaCellX,
-						cellY = tempCellY + deltaCellY,
-						doUpdateX = true,
-						doUpdateY = true;
+						cellY = tempCellY + deltaCellY;
 
 					if (deltaCellX !== oldDeltaCellX || deltaCellY !== oldDeltaCellY) {
 						// old values are used to only do a hit test when the cell changes
 						oldDeltaCellX = deltaCellX;
 						oldDeltaCellY = deltaCellY;
 
-						hitObj = utils.hitMoveTest({
+						utils.hitMoveTest({
 							oldX : scope.client.cellX,
 							oldY : scope.client.cellY,
 							newX : cellX,
 							newY : cellY,
-							grids : [scope.level.bits, scope.level.actions]
-						}, true);
+							grids : [scope.level.bits, scope.level.actions],
+							ignore : {
+								path : true
+							}
+						}, function(hits) {
+							
+							if (hits.length === 0 && !(cellX !== scope.client.cellX && cellY !== scope.client.cellY)) {
+								if (cellX >= 0 && cellX < scope.level.gridCount) {
+									scope.client.cellX = cellX;
+								}
 
-						if (
-							(hitObj.path === false)
-							||
-							(cellX !== scope.client.cellX && cellY !== scope.client.cellY)
-						)
-						{
-							doUpdateX = false;
-							doUpdateY = false;
-						}
+								if (cellY >= 0 && cellY < scope.level.gridCount) {
+									scope.client.cellY = cellY;
+								}
 
-						if (doUpdateX && (cellX >= 0 && cellX < scope.level.gridCount)) {
-							scope.client.cellX = cellX;
-						}
-
-						if (doUpdateY && (cellY >= 0 && cellY < scope.level.gridCount)) {
-							scope.client.cellY = cellY;
-						}
+								scope.$apply();
+							}
+						});
 					}
-
-					scope.$apply();
 				};
 
 				var upFunc = function(e) {
 					hmEl.off('panmove', moveFunc);
 					hmEl.off('panend', upFunc);
 				};
+// paning is a little buggy
+				// hmEl.on('panstart', function(e) {
+				// 	levelOffset = $('#level_content').offset();
+				// 	tempCellX = scope.client.cellX;
+				// 	tempCellY = scope.client.cellY;
 
-				hmEl.on('panstart', function(e) {
-					levelOffset = $('#level_content').offset();
-					tempCellX = scope.client.cellX;
-					tempCellY = scope.client.cellY;
-					tempTapX = Math.round(e.center.x / scope.level.gridSize);
-					tempTapY = Math.round(e.center.y / scope.level.gridSize);
-					
-					hmEl.on('panmove', moveFunc);
-					hmEl.on('panend', upFunc);
-				});
+				// 	hmEl.on('panmove', moveFunc);
+				// 	hmEl.on('panend', upFunc);
+				// });
 
-				hmEl.on('tap', function() {
-					var dimension = scope.client.power*scope.level.gridSize;
+				hmEl.on('tap', function(e) {
+					if (e.target.id === scope.client.id) {
+						if (scope.client.actions > 0) {
+							var dimension = scope.client.power*scope.level.gridSize;
 
-					actionStyle = 'border-color:' + scope.client.color + ';border-width:' + scope.level.gridSize/2 + 'px;';
+							scope.level.actions.push({
+								cls : 'bomb',
+								cellX : scope.client.cellX,
+								cellY : scope.client.cellY,
+								color : scope.client.color,
+								borderSize : scope.level.gridSize/2,
+								size : dimension,
+								cellSize : dimension/scope.level.gridSize,
+								delay : scope.client.actionDelay,
+								client : scope.client,
+								path : false
+							});
 
-					scope.level.actions.push({
-						cls : 'bomb',
-						cellX : scope.client.cellX,
-						cellY : scope.client.cellY,
-						color : scope.client.color,
-						size : dimension,
-						cellSize : dimension/scope.level.gridSize,
-						fx : actionStyle,
-						path : false
-					});
+							scope.client.actions--;
+							scope.$apply();
+						}
+					} else {
+						var cell = getCell(e.center.x, e.center.y);
+						
+						utils.hitMoveTest({
+							oldX : scope.client.cellX,
+							oldY : scope.client.cellY,
+							newX : cell.x,
+							newY : cell.y,
+							grids : [scope.level.bits, scope.level.actions],
+							ignore : {
+								path : true
+							}
+						}, function(hits) {
+							if (hits.length === 0 && !(cell.x !== scope.client.cellX && cell.y !== scope.client.cellY)) {
+								if (cell.x >= 0 && cell.x < scope.level.gridCount) {
+									scope.client.cellX = cell.x;
+								}
 
-					scope.$apply();
+								if (cell.y >= 0 && cell.y < scope.level.gridCount) {
+									scope.client.cellY = cell.y;
+								}
+
+								scope.$apply();
+							}
+						});
+					}
 				});
 
 				$rootScope.$on('actionHit', function(e, data) {	
-					var idx = data.hit.cellY*scope.level.gridCount + data.hit.cellX;
-					
-					if (data.hit.type === 'bit') {
-						scope.level.bits[idx].path = true;
+					var hitIdx;
+				
+					if (data.hit.type === 'bit' && data.hit.cls !== 'static') {
+						hitIdx = scope.level.bits.indexOf(data.hit);
+						scope.level.bits[hitIdx].path = true;
+					}
+
+					if (data.hit.type === 'player') {
+						if (data.hit.health > 0) {
+							data.hit.health--;
+						} else {
+							// remove player
+						}
 					}
 
 					scope.$apply();
-					// switch(data.type) {
-					// 	case 'bomb'
-					// }
-					//console.log(data);
+				});
+
+				$rootScope.$on('actionReplenish', function(e, data) {	
+					if (data.client.actions < data.client.maxActions) {
+						data.client.actions++;
+						scope.$apply();
+					}
 				});
 			}
 		}

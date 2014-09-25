@@ -13,11 +13,27 @@ angular.module('myApp.services', []).
 			}
 			*/
 
-			hitMoveTest : function(data, slide) {
-				var grid;
+			hitMoveTest : function(data, callback) {
+				var grid,
+					hits = [];
 
-				var isCellMatch = function(data, target, slide) {
-					// Check if the user is on top of an element
+				if (typeof callback !== 'function') {
+					// make the call back code easier to write;
+					callback = function() {};
+				}
+
+				var isCellMatch = function(data, target) {
+					if (typeof data.ignore !== 'undefined') {
+						for (var k in data.ignore) {
+							if ((data.ignore.hasOwnProperty(k) && target.hasOwnProperty(k)) && (target[k] === data.ignore[k]) ) {
+								return false;
+							} else {
+								break;
+							}
+						}
+					}
+
+					// Check if the user is on top of an element, if so, ignore cell match
 					if (
 						(data.oldX === data.newX && data.newX === target.cellX)
 						&&
@@ -26,29 +42,24 @@ angular.module('myApp.services', []).
 						return false;
 					}
 
-					if (slide === true) {
-						// if user dragged really fast past a bit...
-						// this says if the historic Y (tempCellY) is known to have been
-						// on one side or the other and now its trying to be on the other side
-						// then that should register a positive hit test. (if they are on the same opposite plane)
-						console.log(data.oldY);
-						console.log(data.newY);
-						console.log(target.cellY);
-						if (
-							(data.newY > target.cellY && data.oldY < target.cellY && data.newX === target.cellX)
-							||
-							(data.newY < target.cellY && data.oldY > target.cellY && data.newX === target.cellX)
-							) {
-							return true;
-						}
+					if (
+						data.newX === target.cellX 
+						&&
+						((data.newY > target.cellY && data.oldY < target.cellY)
+						||
+						(data.newY < target.cellY && data.oldY > target.cellY))
+						) {
+						return true;
+					}
 
-						if (
-							(data.newX > target.cellX && data.oldX < target.cellX && data.newY === target.cellY)
-							||
-							(data.newX <= target.cellX && data.oldX > target.cellX && data.newY === target.cellY)
-							) {
-							return true;
-						}
+					if (
+						data.newY === target.cellY 
+						&&
+						((data.newX > target.cellX && data.oldX < target.cellX)
+						||
+						(data.newX < target.cellX && data.oldX > target.cellX))
+						) {
+						return true;
 					}
 
 					if (target.cellX === data.newX && target.cellY === data.newY) {
@@ -61,28 +72,51 @@ angular.module('myApp.services', []).
 				// check array of grid items
 				for (var sI = 0, sL = data.grids.length; sI < sL; sI++) {
 					grid = data.grids[sI];
-//console.log(grid);
+
 					for (var i = 0, l = grid.length; i < l; i ++) {
 						o = grid[i];
 
-						if (isCellMatch(data, o, slide)) {
-							return o;
+						if (isCellMatch(data, o)) {
+							hits.push(o);
 						}
 					}
 				}
 
-				return false;
+				callback(hits);
 			},
 
 			hitTest : function(data, callback) {
 				var grid,
 					d = data.diameter,
-					ret = [],
+					execute = true,
 					o;
+				
+				cb = function(obj) {
+					if (typeof callback !== 'function') {
+						callback(obj);
+					}
+				};
 
-				if (typeof callback !== 'function') {
-					// make the call back code easier to write;
-					callback = function() {};
+				function checkMatch(targ, data) {
+					if (typeof d !== 'undefined') {
+						if ( (targ.cellY >= data.y - d && targ.cellY < data.y) && targ.cellX === data.x) {
+							// to the top
+							callback(targ);
+						} else if ((targ.cellX <= data.x + d && targ.cellX > data.x) && o.cellY === data.y) {
+							// to the right
+							callback(targ);
+						} else if ((targ.cellY <= data.y + d && targ.cellY > data.y) && targ.cellX === data.x) {
+							// to the bottom
+							callback(targ);
+						} else if ((targ.cellX >= data.x - d && targ.cellX < data.x) && targ.cellY === data.y) {
+							// to the left
+							callback(targ);
+						}
+					} else {
+						if (targ.cellX === data.x && targ.cellY === data.y && !o._hit) {
+							callback(targ);
+						}
+					}
 				}
 
 				// check array of grid items
@@ -92,36 +126,23 @@ angular.module('myApp.services', []).
 					for (var i = 0, l = grid.length; i < l; i ++) {
 						o = grid[i];
 
-						if (o.path === false && o.cls !== 'static') {
-							if (typeof d !== 'undefined') {
-								if ( (o.cellY >= data.y - d && o.cellY < data.y) && o.cellX === data.x) {
-									// to the top
-									callback(o);
-									ret.push(o);
-								} else if ((o.cellX <= data.x + d && o.cellX > data.x) && o.cellY === data.y) {
-									// to the right
-									callback(o);
-									ret.push(o);
-								} else if ((o.cellY <= data.y + d && o.cellY > data.y) && o.cellX === data.x) {
-									// to the bottom
-									callback(o);
-									ret.push(o);
-								} else if ((o.cellX >= data.x - d && o.cellX < data.x) && o.cellY === data.y) {
-									// to the left
-									callback(o);
-									ret.push(o);
-								}
-							} else {
-								if (o.cellX === data.x && o.cellY === data.y) {
-									callback(o);
-									ret = o;
+						if (typeof data.ignore !== 'undefined') {
+							for (var k in data.ignore) {
+								if ( (data.ignore.hasOwnProperty(k) && o.hasOwnProperty(k)) && (o[k] === data.ignore[k]) ) {
+									execute = false;
 								}
 							}
+
+							if (execute) {
+								checkMatch(o, data);
+							}
+
+							execute = true;
+						} else {
+							checkMatch(o, data);
 						}
 					}
 				}
-
-				return ret;
 			},
 
 			ngApply : function($sc, func) {

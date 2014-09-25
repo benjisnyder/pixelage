@@ -227,6 +227,73 @@ if(k&&j[k]&&(e||j[k].data)||void 0!==d||"string"!=typeof b)return k||(k=i?a[h]=c
 !function(a,b,c,d){"use strict";function e(a,b,c){return setTimeout(k(a,c),b)}function f(a,b,c){return Array.isArray(a)?(g(a,c[b],c),!0):!1}function g(a,b,c){var e,f;if(a)if(a.forEach)a.forEach(b,c);else if(a.length!==d)for(e=0,f=a.length;f>e;e++)b.call(c,a[e],e,a);else for(e in a)a.hasOwnProperty(e)&&b.call(c,a[e],e,a)}function h(a,b,c){for(var e=Object.keys(b),f=0,g=e.length;g>f;f++)(!c||c&&a[e[f]]===d)&&(a[e[f]]=b[e[f]]);return a}function i(a,b){return h(a,b,!0)}function j(a,b,c){var d,e=b.prototype;d=a.prototype=Object.create(e),d.constructor=a,d._super=e,c&&h(d,c)}function k(a,b){return function(){return a.apply(b,arguments)}}function l(a,b){return typeof a==hb?a.apply(b?b[0]||d:d,b):a}function m(a,b){return a===d?b:a}function n(a,b,c){g(r(b),function(b){a.addEventListener(b,c,!1)})}function o(a,b,c){g(r(b),function(b){a.removeEventListener(b,c,!1)})}function p(a,b){for(;a;){if(a==b)return!0;a=a.parentNode}return!1}function q(a,b){return a.indexOf(b)>-1}function r(a){return a.trim().split(/\s+/g)}function s(a,b,c){if(a.indexOf&&!c)return a.indexOf(b);for(var d=0,e=a.length;e>d;d++)if(c&&a[d][c]==b||!c&&a[d]===b)return d;return-1}function t(a){return Array.prototype.slice.call(a,0)}function u(a,b,c){for(var d=[],e=[],f=0,g=a.length;g>f;f++){var h=b?a[f][b]:a[f];s(e,h)<0&&d.push(a[f]),e[f]=h}return c&&(d=b?d.sort(function(a,c){return a[b]>c[b]}):d.sort()),d}function v(a,b){for(var c,e,f=b[0].toUpperCase()+b.slice(1),g=0,h=fb.length;h>g;g++)if(c=fb[g],e=c?c+f:b,e in a)return e;return d}function w(){return lb++}function x(b,c){var d=this;this.manager=b,this.callback=c,this.element=b.element,this.target=b.options.inputTarget,this.domHandler=function(a){l(b.options.enable,[b])&&d.handler(a)},this.evEl&&n(this.element,this.evEl,this.domHandler),this.evTarget&&n(this.target,this.evTarget,this.domHandler),this.evWin&&n(a,this.evWin,this.domHandler)}function y(a){var b;return new(b=ob?M:pb?N:nb?P:L)(a,z)}function z(a,b,c){var d=c.pointers.length,e=c.changedPointers.length,f=b&vb&&d-e===0,g=b&(xb|yb)&&d-e===0;c.isFirst=!!f,c.isFinal=!!g,f&&(a.session={}),c.eventType=b,A(a,c),a.emit("hammer.input",c),a.recognize(c),a.session.prevInput=c}function A(a,b){var c=a.session,d=b.pointers,e=d.length;c.firstInput||(c.firstInput=D(b)),e>1&&!c.firstMultiple?c.firstMultiple=D(b):1===e&&(c.firstMultiple=!1);var f=c.firstInput,g=c.firstMultiple,h=g?g.center:f.center,i=b.center=E(d);b.timeStamp=kb(),b.deltaTime=b.timeStamp-f.timeStamp,b.angle=I(h,i),b.distance=H(h,i),B(c,b),b.offsetDirection=G(b.deltaX,b.deltaY),b.scale=g?K(g.pointers,d):1,b.rotation=g?J(g.pointers,d):0,C(c,b);var j=a.element;p(b.srcEvent.target,j)&&(j=b.srcEvent.target),b.target=j}function B(a,b){var c=b.center,d=a.offsetDelta||{},e=a.prevDelta||{},f=a.prevInput||{};(b.eventType===vb||f.eventType===xb)&&(e=a.prevDelta={x:f.deltaX||0,y:f.deltaY||0},d=a.offsetDelta={x:c.x,y:c.y}),b.deltaX=e.x+(c.x-d.x),b.deltaY=e.y+(c.y-d.y)}function C(a,b){var c,e,f,g,h=a.lastInterval||b,i=b.timeStamp-h.timeStamp;if(b.eventType!=yb&&(i>ub||h.velocity===d)){var j=h.deltaX-b.deltaX,k=h.deltaY-b.deltaY,l=F(i,j,k);e=l.x,f=l.y,c=jb(l.x)>jb(l.y)?l.x:l.y,g=G(j,k),a.lastInterval=b}else c=h.velocity,e=h.velocityX,f=h.velocityY,g=h.direction;b.velocity=c,b.velocityX=e,b.velocityY=f,b.direction=g}function D(a){for(var b=[],c=0;c<a.pointers.length;c++)b[c]={clientX:ib(a.pointers[c].clientX),clientY:ib(a.pointers[c].clientY)};return{timeStamp:kb(),pointers:b,center:E(b),deltaX:a.deltaX,deltaY:a.deltaY}}function E(a){var b=a.length;if(1===b)return{x:ib(a[0].clientX),y:ib(a[0].clientY)};for(var c=0,d=0,e=0;b>e;e++)c+=a[e].clientX,d+=a[e].clientY;return{x:ib(c/b),y:ib(d/b)}}function F(a,b,c){return{x:b/a||0,y:c/a||0}}function G(a,b){return a===b?zb:jb(a)>=jb(b)?a>0?Ab:Bb:b>0?Cb:Db}function H(a,b,c){c||(c=Hb);var d=b[c[0]]-a[c[0]],e=b[c[1]]-a[c[1]];return Math.sqrt(d*d+e*e)}function I(a,b,c){c||(c=Hb);var d=b[c[0]]-a[c[0]],e=b[c[1]]-a[c[1]];return 180*Math.atan2(e,d)/Math.PI}function J(a,b){return I(b[1],b[0],Ib)-I(a[1],a[0],Ib)}function K(a,b){return H(b[0],b[1],Ib)/H(a[0],a[1],Ib)}function L(){this.evEl=Kb,this.evWin=Lb,this.allow=!0,this.pressed=!1,x.apply(this,arguments)}function M(){this.evEl=Ob,this.evWin=Pb,x.apply(this,arguments),this.store=this.manager.session.pointerEvents=[]}function N(){this.evTarget=Rb,this.targetIds={},x.apply(this,arguments)}function O(a,b){var c=t(a.touches),d=this.targetIds;if(b&(vb|wb)&&1===c.length)return d[c[0].identifier]=!0,[c,c];var e,f,g=t(a.targetTouches),h=t(a.changedTouches),i=[];if(b===vb)for(e=0,f=g.length;f>e;e++)d[g[e].identifier]=!0;for(e=0,f=h.length;f>e;e++)d[h[e].identifier]&&i.push(h[e]),b&(xb|yb)&&delete d[h[e].identifier];return i.length?[u(g.concat(i),"identifier",!0),i]:void 0}function P(){x.apply(this,arguments);var a=k(this.handler,this);this.touch=new N(this.manager,a),this.mouse=new L(this.manager,a)}function Q(a,b){this.manager=a,this.set(b)}function R(a){if(q(a,Xb))return Xb;var b=q(a,Yb),c=q(a,Zb);return b&&c?Yb+" "+Zb:b||c?b?Yb:Zb:q(a,Wb)?Wb:Vb}function S(a){this.id=w(),this.manager=null,this.options=i(a||{},this.defaults),this.options.enable=m(this.options.enable,!0),this.state=$b,this.simultaneous={},this.requireFail=[]}function T(a){return a&dc?"cancel":a&bc?"end":a&ac?"move":a&_b?"start":""}function U(a){return a==Db?"down":a==Cb?"up":a==Ab?"left":a==Bb?"right":""}function V(a,b){var c=b.manager;return c?c.get(a):a}function W(){S.apply(this,arguments)}function X(){W.apply(this,arguments),this.pX=null,this.pY=null}function Y(){W.apply(this,arguments)}function Z(){S.apply(this,arguments),this._timer=null,this._input=null}function $(){W.apply(this,arguments)}function _(){W.apply(this,arguments)}function ab(){S.apply(this,arguments),this.pTime=!1,this.pCenter=!1,this._timer=null,this._input=null,this.count=0}function bb(a,b){return b=b||{},b.recognizers=m(b.recognizers,bb.defaults.preset),new cb(a,b)}function cb(a,b){b=b||{},this.options=i(b,bb.defaults),this.options.inputTarget=this.options.inputTarget||a,this.handlers={},this.session={},this.recognizers=[],this.element=a,this.input=y(this),this.touchAction=new Q(this,this.options.touchAction),db(this,!0),g(b.recognizers,function(a){var b=this.add(new a[0](a[1]));a[2]&&b.recognizeWith(a[2]),a[3]&&b.requireFailure(a[2])},this)}function db(a,b){var c=a.element;g(a.options.cssProps,function(a,d){c.style[v(c.style,d)]=b?a:""})}function eb(a,c){var d=b.createEvent("Event");d.initEvent(a,!0,!0),d.gesture=c,c.target.dispatchEvent(d)}var fb=["","webkit","moz","MS","ms","o"],gb=b.createElement("div"),hb="function",ib=Math.round,jb=Math.abs,kb=Date.now,lb=1,mb=/mobile|tablet|ip(ad|hone|od)|android/i,nb="ontouchstart"in a,ob=v(a,"PointerEvent")!==d,pb=nb&&mb.test(navigator.userAgent),qb="touch",rb="pen",sb="mouse",tb="kinect",ub=25,vb=1,wb=2,xb=4,yb=8,zb=1,Ab=2,Bb=4,Cb=8,Db=16,Eb=Ab|Bb,Fb=Cb|Db,Gb=Eb|Fb,Hb=["x","y"],Ib=["clientX","clientY"];x.prototype={handler:function(){},destroy:function(){this.evEl&&o(this.element,this.evEl,this.domHandler),this.evTarget&&o(this.target,this.evTarget,this.domHandler),this.evWin&&o(a,this.evWin,this.domHandler)}};var Jb={mousedown:vb,mousemove:wb,mouseup:xb},Kb="mousedown",Lb="mousemove mouseup";j(L,x,{handler:function(a){var b=Jb[a.type];b&vb&&0===a.button&&(this.pressed=!0),b&wb&&1!==a.which&&(b=xb),this.pressed&&this.allow&&(b&xb&&(this.pressed=!1),this.callback(this.manager,b,{pointers:[a],changedPointers:[a],pointerType:sb,srcEvent:a}))}});var Mb={pointerdown:vb,pointermove:wb,pointerup:xb,pointercancel:yb,pointerout:yb},Nb={2:qb,3:rb,4:sb,5:tb},Ob="pointerdown",Pb="pointermove pointerup pointercancel";a.MSPointerEvent&&(Ob="MSPointerDown",Pb="MSPointerMove MSPointerUp MSPointerCancel"),j(M,x,{handler:function(a){var b=this.store,c=!1,d=a.type.toLowerCase().replace("ms",""),e=Mb[d],f=Nb[a.pointerType]||a.pointerType,g=f==qb;e&vb&&(0===a.button||g)?b.push(a):e&(xb|yb)&&(c=!0);var h=s(b,a.pointerId,"pointerId");0>h||(b[h]=a,this.callback(this.manager,e,{pointers:b,changedPointers:[a],pointerType:f,srcEvent:a}),c&&b.splice(h,1))}});var Qb={touchstart:vb,touchmove:wb,touchend:xb,touchcancel:yb},Rb="touchstart touchmove touchend touchcancel";j(N,x,{handler:function(a){var b=Qb[a.type],c=O.call(this,a,b);c&&this.callback(this.manager,b,{pointers:c[0],changedPointers:c[1],pointerType:qb,srcEvent:a})}}),j(P,x,{handler:function(a,b,c){var d=c.pointerType==qb,e=c.pointerType==sb;if(d)this.mouse.allow=!1;else if(e&&!this.mouse.allow)return;b&(xb|yb)&&(this.mouse.allow=!0),this.callback(a,b,c)},destroy:function(){this.touch.destroy(),this.mouse.destroy()}});var Sb=v(gb.style,"touchAction"),Tb=Sb!==d,Ub="compute",Vb="auto",Wb="manipulation",Xb="none",Yb="pan-x",Zb="pan-y";Q.prototype={set:function(a){a==Ub&&(a=this.compute()),Tb&&(this.manager.element.style[Sb]=a),this.actions=a.toLowerCase().trim()},update:function(){this.set(this.manager.options.touchAction)},compute:function(){var a=[];return g(this.manager.recognizers,function(b){l(b.options.enable,[b])&&(a=a.concat(b.getTouchAction()))}),R(a.join(" "))},preventDefaults:function(a){if(!Tb){var b=a.srcEvent,c=a.offsetDirection;if(this.manager.session.prevented)return void b.preventDefault();var d=this.actions,e=q(d,Xb),f=q(d,Zb),g=q(d,Yb);return e||f&&g||f&&c&Eb||g&&c&Fb?this.preventSrc(b):void 0}},preventSrc:function(a){this.manager.session.prevented=!0,a.preventDefault()}};var $b=1,_b=2,ac=4,bc=8,cc=bc,dc=16,ec=32;S.prototype={defaults:{},set:function(a){return h(this.options,a),this.manager&&this.manager.touchAction.update(),this},recognizeWith:function(a){if(f(a,"recognizeWith",this))return this;var b=this.simultaneous;return a=V(a,this),b[a.id]||(b[a.id]=a,a.recognizeWith(this)),this},dropRecognizeWith:function(a){return f(a,"dropRecognizeWith",this)?this:(a=V(a,this),delete this.simultaneous[a.id],this)},requireFailure:function(a){if(f(a,"requireFailure",this))return this;var b=this.requireFail;return a=V(a,this),-1===s(b,a)&&(b.push(a),a.requireFailure(this)),this},dropRequireFailure:function(a){if(f(a,"dropRequireFailure",this))return this;a=V(a,this);var b=s(this.requireFail,a);return b>-1&&this.requireFail.splice(b,1),this},hasRequireFailures:function(){return this.requireFail.length>0},canRecognizeWith:function(a){return!!this.simultaneous[a.id]},emit:function(a){function b(b){c.manager.emit(c.options.event+(b?T(d):""),a)}var c=this,d=this.state;bc>d&&b(!0),b(),d>=bc&&b(!0)},tryEmit:function(a){return this.canEmit()?this.emit(a):void(this.state=ec)},canEmit:function(){for(var a=0;a<this.requireFail.length;a++)if(!(this.requireFail[a].state&(ec|$b)))return!1;return!0},recognize:function(a){var b=h({},a);return l(this.options.enable,[this,b])?(this.state&(cc|dc|ec)&&(this.state=$b),this.state=this.process(b),void(this.state&(_b|ac|bc|dc)&&this.tryEmit(b))):(this.reset(),void(this.state=ec))},process:function(){},getTouchAction:function(){},reset:function(){}},j(W,S,{defaults:{pointers:1},attrTest:function(a){var b=this.options.pointers;return 0===b||a.pointers.length===b},process:function(a){var b=this.state,c=a.eventType,d=b&(_b|ac),e=this.attrTest(a);return d&&(c&yb||!e)?b|dc:d||e?c&xb?b|bc:b&_b?b|ac:_b:ec}}),j(X,W,{defaults:{event:"pan",threshold:10,pointers:1,direction:Gb},getTouchAction:function(){var a=this.options.direction;if(a===Gb)return[Xb];var b=[];return a&Eb&&b.push(Zb),a&Fb&&b.push(Yb),b},directionTest:function(a){var b=this.options,c=!0,d=a.distance,e=a.direction,f=a.deltaX,g=a.deltaY;return e&b.direction||(b.direction&Eb?(e=0===f?zb:0>f?Ab:Bb,c=f!=this.pX,d=Math.abs(a.deltaX)):(e=0===g?zb:0>g?Cb:Db,c=g!=this.pY,d=Math.abs(a.deltaY))),a.direction=e,c&&d>b.threshold&&e&b.direction},attrTest:function(a){return W.prototype.attrTest.call(this,a)&&(this.state&_b||!(this.state&_b)&&this.directionTest(a))},emit:function(a){this.pX=a.deltaX,this.pY=a.deltaY;var b=U(a.direction);b&&this.manager.emit(this.options.event+b,a),this._super.emit.call(this,a)}}),j(Y,W,{defaults:{event:"pinch",threshold:0,pointers:2},getTouchAction:function(){return[Xb]},attrTest:function(a){return this._super.attrTest.call(this,a)&&(Math.abs(a.scale-1)>this.options.threshold||this.state&_b)},emit:function(a){if(this._super.emit.call(this,a),1!==a.scale){var b=a.scale<1?"in":"out";this.manager.emit(this.options.event+b,a)}}}),j(Z,S,{defaults:{event:"press",pointers:1,time:500,threshold:5},getTouchAction:function(){return[Vb]},process:function(a){var b=this.options,c=a.pointers.length===b.pointers,d=a.distance<b.threshold,f=a.deltaTime>b.time;if(this._input=a,!d||!c||a.eventType&(xb|yb)&&!f)this.reset();else if(a.eventType&vb)this.reset(),this._timer=e(function(){this.state=cc,this.tryEmit()},b.time,this);else if(a.eventType&xb)return cc;return ec},reset:function(){clearTimeout(this._timer)},emit:function(a){this.state===cc&&(a&&a.eventType&xb?this.manager.emit(this.options.event+"up",a):(this._input.timeStamp=kb(),this.manager.emit(this.options.event,this._input)))}}),j($,W,{defaults:{event:"rotate",threshold:0,pointers:2},getTouchAction:function(){return[Xb]},attrTest:function(a){return this._super.attrTest.call(this,a)&&(Math.abs(a.rotation)>this.options.threshold||this.state&_b)}}),j(_,W,{defaults:{event:"swipe",threshold:10,velocity:.65,direction:Eb|Fb,pointers:1},getTouchAction:function(){return X.prototype.getTouchAction.call(this)},attrTest:function(a){var b,c=this.options.direction;return c&(Eb|Fb)?b=a.velocity:c&Eb?b=a.velocityX:c&Fb&&(b=a.velocityY),this._super.attrTest.call(this,a)&&c&a.direction&&jb(b)>this.options.velocity&&a.eventType&xb},emit:function(a){var b=U(a.direction);b&&this.manager.emit(this.options.event+b,a),this.manager.emit(this.options.event,a)}}),j(ab,S,{defaults:{event:"tap",pointers:1,taps:1,interval:300,time:250,threshold:2,posThreshold:10},getTouchAction:function(){return[Wb]},process:function(a){var b=this.options,c=a.pointers.length===b.pointers,d=a.distance<b.threshold,f=a.deltaTime<b.time;if(this.reset(),a.eventType&vb&&0===this.count)return this.failTimeout();if(d&&f&&c){if(a.eventType!=xb)return this.failTimeout();var g=this.pTime?a.timeStamp-this.pTime<b.interval:!0,h=!this.pCenter||H(this.pCenter,a.center)<b.posThreshold;this.pTime=a.timeStamp,this.pCenter=a.center,h&&g?this.count+=1:this.count=1,this._input=a;var i=this.count%b.taps;if(0===i)return this.hasRequireFailures()?(this._timer=e(function(){this.state=cc,this.tryEmit()},b.interval,this),_b):cc}return ec},failTimeout:function(){return this._timer=e(function(){this.state=ec},this.options.interval,this),ec},reset:function(){clearTimeout(this._timer)},emit:function(){this.state==cc&&(this._input.tapCount=this.count,this.manager.emit(this.options.event,this._input))}}),bb.VERSION="2.0.2",bb.defaults={domEvents:!1,touchAction:Ub,inputTarget:null,enable:!0,preset:[[$,{enable:!1}],[Y,{enable:!1},["rotate"]],[_,{direction:Eb}],[X,{direction:Eb},["swipe"]],[ab],[ab,{event:"doubletap",taps:2},["tap"]],[Z]],cssProps:{userSelect:"none",touchSelect:"none",touchCallout:"none",contentZooming:"none",userDrag:"none",tapHighlightColor:"rgba(0,0,0,0)"}};var fc=1,gc=2;cb.prototype={set:function(a){return h(this.options,a),this},stop:function(a){this.session.stopped=a?gc:fc},recognize:function(a){var b=this.session;if(!b.stopped){this.touchAction.preventDefaults(a);var c,d=this.recognizers,e=b.curRecognizer;(!e||e&&e.state&cc)&&(e=b.curRecognizer=null);for(var f=0,g=d.length;g>f;f++)c=d[f],b.stopped===gc||e&&c!=e&&!c.canRecognizeWith(e)?c.reset():c.recognize(a),!e&&c.state&(_b|ac|bc)&&(e=b.curRecognizer=c)}},get:function(a){if(a instanceof S)return a;for(var b=this.recognizers,c=0;c<b.length;c++)if(b[c].options.event==a)return b[c];return null},add:function(a){if(f(a,"add",this))return this;var b=this.get(a.options.event);return b&&this.remove(b),this.recognizers.push(a),a.manager=this,this.touchAction.update(),a},remove:function(a){if(f(a,"remove",this))return this;var b=this.recognizers;return a=this.get(a),b.splice(s(b,a),1),this.touchAction.update(),this},on:function(a,b){var c=this.handlers;return g(r(a),function(a){c[a]=c[a]||[],c[a].push(b)}),this},off:function(a,b){var c=this.handlers;return g(r(a),function(a){b?c[a].splice(s(c[a],b),1):delete c[a]}),this},emit:function(a,b){this.options.domEvents&&eb(a,b);var c=this.handlers[a]&&this.handlers[a].slice();if(c&&c.length){b.type=a,b.preventDefault=function(){b.srcEvent.preventDefault()};for(var d=0,e=c.length;e>d;d++)c[d](b)}},destroy:function(){this.element&&db(this,!1),this.handlers={},this.session={},this.input.destroy(),this.element=null}},h(bb,{INPUT_START:vb,INPUT_MOVE:wb,INPUT_END:xb,INPUT_CANCEL:yb,STATE_POSSIBLE:$b,STATE_BEGAN:_b,STATE_CHANGED:ac,STATE_ENDED:bc,STATE_RECOGNIZED:cc,STATE_CANCELLED:dc,STATE_FAILED:ec,DIRECTION_NONE:zb,DIRECTION_LEFT:Ab,DIRECTION_RIGHT:Bb,DIRECTION_UP:Cb,DIRECTION_DOWN:Db,DIRECTION_HORIZONTAL:Eb,DIRECTION_VERTICAL:Fb,DIRECTION_ALL:Gb,Manager:cb,Input:x,TouchAction:Q,Recognizer:S,AttrRecognizer:W,Tap:ab,Pan:X,Swipe:_,Pinch:Y,Rotate:$,Press:Z,on:n,off:o,each:g,merge:i,extend:h,inherit:j,bindFn:k,prefixed:v}),typeof define==hb&&define.amd?define(function(){return bb}):"undefined"!=typeof module&&module.exports?module.exports=bb:a[c]=bb}(window,document,"Hammer");
 'use strict';
 
+// Production steps of ECMA-262, Edition 5, 15.4.4.14
+// Reference: http://es5.github.io/#x15.4.4.14
+if (!Array.prototype.indexOf) {
+  Array.prototype.indexOf = function(searchElement, fromIndex) {
+
+    var k;
+
+    // 1. Let O be the result of calling ToObject passing
+    //    the this value as the argument.
+    if (this == null) {
+      throw new TypeError('"this" is null or not defined');
+    }
+
+    var O = Object(this);
+
+    // 2. Let lenValue be the result of calling the Get
+    //    internal method of O with the argument "length".
+    // 3. Let len be ToUint32(lenValue).
+    var len = O.length >>> 0;
+
+    // 4. If len is 0, return -1.
+    if (len === 0) {
+      return -1;
+    }
+
+    // 5. If argument fromIndex was passed let n be
+    //    ToInteger(fromIndex); else let n be 0.
+    var n = +fromIndex || 0;
+
+    if (Math.abs(n) === Infinity) {
+      n = 0;
+    }
+
+    // 6. If n >= len, return -1.
+    if (n >= len) {
+      return -1;
+    }
+
+    // 7. If n >= 0, then Let k be n.
+    // 8. Else, n<0, Let k be len - abs(n).
+    //    If k is less than 0, then let k be 0.
+    k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+
+    // 9. Repeat, while k < len
+    while (k < len) {
+      var kValue;
+      // a. Let Pk be ToString(k).
+      //   This is implicit for LHS operands of the in operator
+      // b. Let kPresent be the result of calling the
+      //    HasProperty internal method of O with argument Pk.
+      //   This step can be combined with c
+      // c. If kPresent is true, then
+      //    i.  Let elementK be the result of calling the Get
+      //        internal method of O with the argument ToString(k).
+      //   ii.  Let same be the result of applying the
+      //        Strict Equality Comparison Algorithm to
+      //        searchElement and elementK.
+      //  iii.  If same is true, return k.
+      if (k in O && O[k] === searchElement) {
+        return k;
+      }
+      k++;
+    }
+    return -1;
+  };
+}
+
 // Declare app level module which depends on filters, and services
 angular.module('myApp', [
 	'ngRoute',
@@ -243,14 +310,11 @@ angular.module('myApp', [
 					docHeight = $(document).height() - 40;
 
 				var players = [
-					{client : true, name : 'bsnyder', id : 'OzAnLt', color : '#ff0000', health : 2, power : 2, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0}
-				];
-
-				/*
-{name : 'apollo', id : 'XzATLt', color : '#00ff00', health : 2, power : 2, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
+					{client : true, name : 'bsnyder', id : 'OzAnLt', color : '#ff0000', health : 2, power : 2, actions : 2, maxActions : 2, actionDelay : 2000, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
+					{name : 'apollo', id : 'XzATLt', color : '#00ff00', health : 2, power : 2, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
 					{name : 'owen', id : 'OzAnPX',color : '#0000ff', health : 2, power : 2, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
 					{name : 'erica', id : 'ZCVvfO',color : 'purple', health : 2, power : 2, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0}
-				*/
+				];
 
 				var level = {
 					name : 'Level 1',
@@ -260,7 +324,7 @@ angular.module('myApp', [
 					gridSize : 40,
 					gridCount : 7,
 					pattern : [
-						'0003000',
+						'0003002',
 						'0121210',
 						'0422230',
 						'4128214',
@@ -268,15 +332,15 @@ angular.module('myApp', [
 						'0121210',
 						'0003000'
 					],
-					/*pattern : [
-						'0001000',
-						'0101010',
-						'1001000',
-						'0108010',
-						'0001010',
-						'0111010',
-						'0010110'
-					],*/
+					// pattern : [
+					// 	'0000000',
+					// 	'0101010',
+					// 	'1001000',
+					// 	'0108010',
+					// 	'0001010',
+					// 	'0111010',
+					// 	'0010110'
+					// ],
 				};
 
 				level.bits = [];
@@ -338,6 +402,7 @@ angular.module('myApp', [
 					// default is 0/0
 					player.cellX = 0;
 					player.cellY = 0;
+					player.type = 'player';
 
 					// overrides
 					switch(i) {
@@ -355,8 +420,8 @@ angular.module('myApp', [
 				}
 
 				var context = {
-					players : players,
 					level : level,
+					players : players,
 					time : 72000 //1.2 mins
 				};
 
@@ -380,11 +445,27 @@ angular.module('myApp.services', []).
 			}
 			*/
 
-			hitMoveTest : function(data, slide) {
-				var grid;
+			hitMoveTest : function(data, callback) {
+				var grid,
+					hits = [];
 
-				var isCellMatch = function(data, target, slide) {
-					// Check if the user is on top of an element
+				if (typeof callback !== 'function') {
+					// make the call back code easier to write;
+					callback = function() {};
+				}
+
+				var isCellMatch = function(data, target) {
+					if (typeof data.ignore !== 'undefined') {
+						for (var k in data.ignore) {
+							if ((data.ignore.hasOwnProperty(k) && target.hasOwnProperty(k)) && (target[k] === data.ignore[k]) ) {
+								return false;
+							} else {
+								break;
+							}
+						}
+					}
+
+					// Check if the user is on top of an element, if so, ignore cell match
 					if (
 						(data.oldX === data.newX && data.newX === target.cellX)
 						&&
@@ -393,29 +474,24 @@ angular.module('myApp.services', []).
 						return false;
 					}
 
-					if (slide === true) {
-						// if user dragged really fast past a bit...
-						// this says if the historic Y (tempCellY) is known to have been
-						// on one side or the other and now its trying to be on the other side
-						// then that should register a positive hit test. (if they are on the same opposite plane)
-						console.log(data.oldY);
-						console.log(data.newY);
-						console.log(target.cellY);
-						if (
-							(data.newY > target.cellY && data.oldY < target.cellY && data.newX === target.cellX)
-							||
-							(data.newY < target.cellY && data.oldY > target.cellY && data.newX === target.cellX)
-							) {
-							return true;
-						}
+					if (
+						data.newX === target.cellX 
+						&&
+						((data.newY > target.cellY && data.oldY < target.cellY)
+						||
+						(data.newY < target.cellY && data.oldY > target.cellY))
+						) {
+						return true;
+					}
 
-						if (
-							(data.newX > target.cellX && data.oldX < target.cellX && data.newY === target.cellY)
-							||
-							(data.newX <= target.cellX && data.oldX > target.cellX && data.newY === target.cellY)
-							) {
-							return true;
-						}
+					if (
+						data.newY === target.cellY 
+						&&
+						((data.newX > target.cellX && data.oldX < target.cellX)
+						||
+						(data.newX < target.cellX && data.oldX > target.cellX))
+						) {
+						return true;
 					}
 
 					if (target.cellX === data.newX && target.cellY === data.newY) {
@@ -428,28 +504,51 @@ angular.module('myApp.services', []).
 				// check array of grid items
 				for (var sI = 0, sL = data.grids.length; sI < sL; sI++) {
 					grid = data.grids[sI];
-//console.log(grid);
+
 					for (var i = 0, l = grid.length; i < l; i ++) {
 						o = grid[i];
 
-						if (isCellMatch(data, o, slide)) {
-							return o;
+						if (isCellMatch(data, o)) {
+							hits.push(o);
 						}
 					}
 				}
 
-				return false;
+				callback(hits);
 			},
 
 			hitTest : function(data, callback) {
 				var grid,
 					d = data.diameter,
-					ret = [],
+					execute = true,
 					o;
+				
+				cb = function(obj) {
+					if (typeof callback !== 'function') {
+						callback(obj);
+					}
+				};
 
-				if (typeof callback !== 'function') {
-					// make the call back code easier to write;
-					callback = function() {};
+				function checkMatch(targ, data) {
+					if (typeof d !== 'undefined') {
+						if ( (targ.cellY >= data.y - d && targ.cellY < data.y) && targ.cellX === data.x) {
+							// to the top
+							callback(targ);
+						} else if ((targ.cellX <= data.x + d && targ.cellX > data.x) && o.cellY === data.y) {
+							// to the right
+							callback(targ);
+						} else if ((targ.cellY <= data.y + d && targ.cellY > data.y) && targ.cellX === data.x) {
+							// to the bottom
+							callback(targ);
+						} else if ((targ.cellX >= data.x - d && targ.cellX < data.x) && targ.cellY === data.y) {
+							// to the left
+							callback(targ);
+						}
+					} else {
+						if (targ.cellX === data.x && targ.cellY === data.y && !o._hit) {
+							callback(targ);
+						}
+					}
 				}
 
 				// check array of grid items
@@ -459,36 +558,23 @@ angular.module('myApp.services', []).
 					for (var i = 0, l = grid.length; i < l; i ++) {
 						o = grid[i];
 
-						if (o.path === false && o.cls !== 'static') {
-							if (typeof d !== 'undefined') {
-								if ( (o.cellY >= data.y - d && o.cellY < data.y) && o.cellX === data.x) {
-									// to the top
-									callback(o);
-									ret.push(o);
-								} else if ((o.cellX <= data.x + d && o.cellX > data.x) && o.cellY === data.y) {
-									// to the right
-									callback(o);
-									ret.push(o);
-								} else if ((o.cellY <= data.y + d && o.cellY > data.y) && o.cellX === data.x) {
-									// to the bottom
-									callback(o);
-									ret.push(o);
-								} else if ((o.cellX >= data.x - d && o.cellX < data.x) && o.cellY === data.y) {
-									// to the left
-									callback(o);
-									ret.push(o);
-								}
-							} else {
-								if (o.cellX === data.x && o.cellY === data.y) {
-									callback(o);
-									ret = o;
+						if (typeof data.ignore !== 'undefined') {
+							for (var k in data.ignore) {
+								if ( (data.ignore.hasOwnProperty(k) && o.hasOwnProperty(k)) && (o[k] === data.ignore[k]) ) {
+									execute = false;
 								}
 							}
+
+							if (execute) {
+								checkMatch(o, data);
+							}
+
+							execute = true;
+						} else {
+							checkMatch(o, data);
 						}
 					}
 				}
-
-				return ret;
 			},
 
 			ngApply : function($sc, func) {
@@ -538,7 +624,7 @@ angular.module('myApp.directives', []).
 				player : '='
 			},
 			link : function(scope, element, attrs) {
-				if (typeof scope.player.client !== 'typeof' && scope.player.client === true) {
+				if (typeof scope.player.client !== 'undefined' && scope.player.client === true) {
 					$rootScope.$broadcast('registerClient', {client : scope.player});
 				}
 			}
@@ -549,17 +635,21 @@ angular.module('myApp.directives', []).
 		return function(scope, element, attrs) {
 			var s = scope;
 
-			setTimeout(function() {
+			s.a.fx = 'border-color:' + s.a.color + ';border-width:' + s.a.borderSize + 'px;';
+
+			s._toId = window.setTimeout(function() {
 				utils.hitTest({
 					x : s.a.cellX,
 					y : s.a.cellY,
 					diameter : s.a.cellSize,
-					grids : [scope.level.bits]
+					grids : [scope.level.bits, scope.players],
+					ignore : {
+						path : true,
+						cls : 'static'
+					}
 				}, function(hit) {
-					// hit test will only return cells that have path == false
 					$rootScope.$broadcast('actionHit', {
 						type : 'bomb',
-						source : s.a,
 						hit : hit
 					});
 				});
@@ -567,7 +657,13 @@ angular.module('myApp.directives', []).
 				s.a.fx = 'box-shadow: 0 ' + s.a.size + 'px 0px 0px ' + s.a.color + ', ' + s.a.size + 'px 0 0px 0px ' + s.a.color + ', 0 -' + s.a.size + 'px 0px 0px ' + s.a.color + ', -' + s.a.size + 'px 0 0px 0px ' + s.a.color + ';';
 				element.addClass('fire');
 				s.$apply();
-			}, 1000);
+
+				s.a.path = true;
+
+				$rootScope.$broadcast('actionReplenish', {
+					client : s.a.client
+				});
+			}, s.a.delay);
 		}
 	}]).
 
@@ -580,111 +676,170 @@ angular.module('myApp.directives', []).
 			link : function(scope, element, attrs) {
 				var hmEl = new Hammer(element[0]);
 					gridSize = scope.level.gridSize,
-					levelOffset = null,
 					tempCellX = 0,
 					tempCellY = 0,
 					tempTapX = 0,
 					tempTapY = 0,
 					oldDeltaCellX = 0,
 					oldDeltaCellY = 0,
-					hitObj = {},
 					actionStyle = '';
 
 				hmEl.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 				hmEl.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
 
+				function getCell(x, y) {
+					var	levelOffset = $('#level_content').offset(),
+						tapX = (x-levelOffset.left) / scope.level.gridSize,
+						tapY = (y-levelOffset.top) / scope.level.gridSize;
+
+					if (tapX > scope.client.cellX + 1) {
+						tapX = Math.ceil(tapX) - 1;
+					} else if (tapX < scope.client.cellX) {
+						tapX = Math.floor(tapX);
+					} else {
+						tapX = scope.client.cellX;
+					}
+
+					if (tapY > scope.client.cellY + 1) {
+						tapY = Math.ceil(tapY) - 1;
+					} else if (tapY < scope.client.cellY) {
+						tapY = Math.floor(tapY);
+					} else {
+						tapY = scope.client.cellY;
+					}
+
+					return {
+						x : tapX,
+						y : tapY
+					};
+				}
+
 				var moveFunc = function(e) {
-					var curTapCellX = Math.round(e.center.x / scope.level.gridSize),
-						curTapCellY = Math.round(e.center.y / scope.level.gridSize), 
-						deltaCellX =  curTapCellX - tempTapX,
-						deltaCellY =  curTapCellY - tempTapY,
+					// Pan is not working quite right, cant pan up or left
+					var cell = getCell(e.center.x, e.center.y),
+						deltaCellX =  cell.x - tempTapX,
+						deltaCellY =  cell.y - tempTapY,
 						cellX = tempCellX + deltaCellX,
-						cellY = tempCellY + deltaCellY,
-						doUpdateX = true,
-						doUpdateY = true;
+						cellY = tempCellY + deltaCellY;
 
 					if (deltaCellX !== oldDeltaCellX || deltaCellY !== oldDeltaCellY) {
 						// old values are used to only do a hit test when the cell changes
 						oldDeltaCellX = deltaCellX;
 						oldDeltaCellY = deltaCellY;
 
-						hitObj = utils.hitMoveTest({
+						utils.hitMoveTest({
 							oldX : scope.client.cellX,
 							oldY : scope.client.cellY,
 							newX : cellX,
 							newY : cellY,
-							grids : [scope.level.bits, scope.level.actions]
-						}, true);
+							grids : [scope.level.bits, scope.level.actions],
+							ignore : {
+								path : true
+							}
+						}, function(hits) {
+							
+							if (hits.length === 0 && !(cellX !== scope.client.cellX && cellY !== scope.client.cellY)) {
+								if (cellX >= 0 && cellX < scope.level.gridCount) {
+									scope.client.cellX = cellX;
+								}
 
-						if (
-							(hitObj.path === false)
-							||
-							(cellX !== scope.client.cellX && cellY !== scope.client.cellY)
-						)
-						{
-							doUpdateX = false;
-							doUpdateY = false;
-						}
+								if (cellY >= 0 && cellY < scope.level.gridCount) {
+									scope.client.cellY = cellY;
+								}
 
-						if (doUpdateX && (cellX >= 0 && cellX < scope.level.gridCount)) {
-							scope.client.cellX = cellX;
-						}
-
-						if (doUpdateY && (cellY >= 0 && cellY < scope.level.gridCount)) {
-							scope.client.cellY = cellY;
-						}
+								scope.$apply();
+							}
+						});
 					}
-
-					scope.$apply();
 				};
 
 				var upFunc = function(e) {
 					hmEl.off('panmove', moveFunc);
 					hmEl.off('panend', upFunc);
 				};
+// paning is a little buggy
+				// hmEl.on('panstart', function(e) {
+				// 	levelOffset = $('#level_content').offset();
+				// 	tempCellX = scope.client.cellX;
+				// 	tempCellY = scope.client.cellY;
 
-				hmEl.on('panstart', function(e) {
-					levelOffset = $('#level_content').offset();
-					tempCellX = scope.client.cellX;
-					tempCellY = scope.client.cellY;
-					tempTapX = Math.round(e.center.x / scope.level.gridSize);
-					tempTapY = Math.round(e.center.y / scope.level.gridSize);
-					
-					hmEl.on('panmove', moveFunc);
-					hmEl.on('panend', upFunc);
-				});
+				// 	hmEl.on('panmove', moveFunc);
+				// 	hmEl.on('panend', upFunc);
+				// });
 
-				hmEl.on('tap', function() {
-					var dimension = scope.client.power*scope.level.gridSize;
+				hmEl.on('tap', function(e) {
+					if (e.target.id === scope.client.id) {
+						if (scope.client.actions > 0) {
+							var dimension = scope.client.power*scope.level.gridSize;
 
-					actionStyle = 'border-color:' + scope.client.color + ';border-width:' + scope.level.gridSize/2 + 'px;';
+							scope.level.actions.push({
+								cls : 'bomb',
+								cellX : scope.client.cellX,
+								cellY : scope.client.cellY,
+								color : scope.client.color,
+								borderSize : scope.level.gridSize/2,
+								size : dimension,
+								cellSize : dimension/scope.level.gridSize,
+								delay : scope.client.actionDelay,
+								client : scope.client,
+								path : false
+							});
 
-					scope.level.actions.push({
-						cls : 'bomb',
-						cellX : scope.client.cellX,
-						cellY : scope.client.cellY,
-						color : scope.client.color,
-						size : dimension,
-						cellSize : dimension/scope.level.gridSize,
-						fx : actionStyle,
-						path : false
-					});
+							scope.client.actions--;
+							scope.$apply();
+						}
+					} else {
+						var cell = getCell(e.center.x, e.center.y);
+						
+						utils.hitMoveTest({
+							oldX : scope.client.cellX,
+							oldY : scope.client.cellY,
+							newX : cell.x,
+							newY : cell.y,
+							grids : [scope.level.bits, scope.level.actions],
+							ignore : {
+								path : true
+							}
+						}, function(hits) {
+							if (hits.length === 0 && !(cell.x !== scope.client.cellX && cell.y !== scope.client.cellY)) {
+								if (cell.x >= 0 && cell.x < scope.level.gridCount) {
+									scope.client.cellX = cell.x;
+								}
 
-					scope.$apply();
+								if (cell.y >= 0 && cell.y < scope.level.gridCount) {
+									scope.client.cellY = cell.y;
+								}
+
+								scope.$apply();
+							}
+						});
+					}
 				});
 
 				$rootScope.$on('actionHit', function(e, data) {	
-					var idx = data.hit.cellY*scope.level.gridCount + data.hit.cellX;
-					
-					if (data.hit.type === 'bit') {
-						scope.level.bits[idx].path = true;
+					var hitIdx;
+				
+					if (data.hit.type === 'bit' && data.hit.cls !== 'static') {
+						hitIdx = scope.level.bits.indexOf(data.hit);
+						scope.level.bits[hitIdx].path = true;
+					}
+
+					if (data.hit.type === 'player') {
+						if (data.hit.health > 0) {
+							data.hit.health--;
+						} else {
+							// remove player
+						}
 					}
 
 					scope.$apply();
-					// switch(data.type) {
-					// 	case 'bomb'
-					// }
-					//console.log(data);
+				});
+
+				$rootScope.$on('actionReplenish', function(e, data) {	
+					if (data.client.actions < data.client.maxActions) {
+						data.client.actions++;
+						scope.$apply();
+					}
 				});
 			}
 		}

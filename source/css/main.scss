@@ -108,7 +108,11 @@ a:hover {
    -o-transform: translateZ(0);
    transform: translateZ(0);
 
-	transition: all 250ms;
+	transition: all 200ms;
+}
+
+.player {
+	transition: all 400ms;
 }
 
 .bit {
@@ -132,7 +136,7 @@ a:hover {
 	border-style: solid;
 	background-color: rgba(0, 0, 0, 1);
 	/*box-shadow:0 0 11px 5px rgb(255, 0, 0);*/
-	transition: all 600ms ease 0ms, opacity 400ms ease 600ms;
+	transition: all 400ms ease 0ms, opacity 400ms ease 600ms;
 }
 
 .bomb.fire {
