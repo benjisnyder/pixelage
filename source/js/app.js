@@ -83,10 +83,10 @@ angular.module('myApp', [
 					docHeight = $(document).height() - 40;
 
 				var players = [
-					{client : true, name : 'bsnyder', id : 'OzAnLt', color : '#ff0000', health : 2, power : 2, actions : 2, maxActions : 2, actionDelay : 2000, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
-					{name : 'apollo', id : 'XzATLt', color : '#00ff00', health : 2, power : 2, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
-					{name : 'owen', id : 'OzAnPX',color : '#0000ff', health : 2, power : 2, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
-					{name : 'erica', id : 'ZCVvfO',color : 'purple', health : 2, power : 2, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0}
+					{client : true, name : 'bsnyder', id : 'OzAnLt', color : '#ff0000', health : 2, power : 1, actions : 2, maxActions : 2, actionDelay : 2000, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
+					{name : 'apollo', id : 'XzATLt', color : '#00ff00', health : 2, power : 1, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
+					{name : 'owen', id : 'OzAnPX',color : '#0000ff', health : 2, power : 1, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
+					{name : 'erica', id : 'ZCVvfO',color : 'purple', health : 2, power : 1, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0}
 				];
 
 				var level = {

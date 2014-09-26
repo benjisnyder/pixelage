@@ -310,10 +310,10 @@ angular.module('myApp', [
 					docHeight = $(document).height() - 40;
 
 				var players = [
-					{client : true, name : 'bsnyder', id : 'OzAnLt', color : '#ff0000', health : 2, power : 2, actions : 2, maxActions : 2, actionDelay : 2000, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
-					{name : 'apollo', id : 'XzATLt', color : '#00ff00', health : 2, power : 2, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
-					{name : 'owen', id : 'OzAnPX',color : '#0000ff', health : 2, power : 2, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
-					{name : 'erica', id : 'ZCVvfO',color : 'purple', health : 2, power : 2, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0}
+					{client : true, name : 'bsnyder', id : 'OzAnLt', color : '#ff0000', health : 2, power : 1, actions : 2, maxActions : 2, actionDelay : 2000, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
+					{name : 'apollo', id : 'XzATLt', color : '#00ff00', health : 2, power : 1, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
+					{name : 'owen', id : 'OzAnPX',color : '#0000ff', health : 2, power : 1, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0},
+					{name : 'erica', id : 'ZCVvfO',color : 'purple', health : 2, power : 1, special : null, rounds : 0, wins : 0, diodes : 0, bits : 0}
 				];
 
 				var level = {
@@ -509,12 +509,15 @@ angular.module('myApp.services', []).
 						o = grid[i];
 
 						if (isCellMatch(data, o)) {
+							callback(o);
 							hits.push(o);
 						}
 					}
 				}
 
-				callback(hits);
+				if (hits.length === 0) {
+					callback(false);
+				}
 			},
 
 			hitTest : function(data, callback) {
@@ -684,8 +687,28 @@ angular.module('myApp.directives', []).
 					oldDeltaCellY = 0,
 					actionStyle = '';
 
+
+				var horizontal = new Hammer.Pan({
+				    event: 'panh',
+				    direction: Hammer.DIRECTION_HORIZONTAL
+				});
+				var vertical = new Hammer.Pan({
+				    event: 'panv',
+				    direction: Hammer.DIRECTION_VERTICAL
+				});
+				vertical.requireFailure(horizontal);
+
 				hmEl.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 				hmEl.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
+				hmEl.get('press').set({ time: 0 });
+
+				function valUp(val) {
+					scope.client[val]++;
+				};
+
+				function valDown(val) {
+					scope.client[val]--;
+				};
 
 				function getCell(x, y) {
 					var	levelOffset = $('#level_content').offset(),
@@ -714,60 +737,67 @@ angular.module('myApp.directives', []).
 					};
 				}
 
-				var moveFunc = function(e) {
-					// Pan is not working quite right, cant pan up or left
-					var cell = getCell(e.center.x, e.center.y),
-						deltaCellX =  cell.x - tempTapX,
-						deltaCellY =  cell.y - tempTapY,
-						cellX = tempCellX + deltaCellX,
-						cellY = tempCellY + deltaCellY;
-
-					if (deltaCellX !== oldDeltaCellX || deltaCellY !== oldDeltaCellY) {
-						// old values are used to only do a hit test when the cell changes
-						oldDeltaCellX = deltaCellX;
-						oldDeltaCellY = deltaCellY;
-
-						utils.hitMoveTest({
-							oldX : scope.client.cellX,
-							oldY : scope.client.cellY,
-							newX : cellX,
-							newY : cellY,
-							grids : [scope.level.bits, scope.level.actions],
-							ignore : {
-								path : true
+				function doMove(newX, newY) {
+					utils.hitMoveTest({
+						oldX : scope.client.cellX,
+						oldY : scope.client.cellY,
+						newX : newX,
+						newY : newY,
+						grids : [scope.level.bits, scope.level.actions],
+						ignore : {
+							path : true
+						}
+					}, function(result) {
+						if ((result.type !== 'bit' || result.path === 'active' || result.cls === 'diode') && !(newX !== scope.client.cellX && newY !== scope.client.cellY)) {
+							if (newX >= 0 && newX < scope.level.gridCount) {
+								scope.client.cellX = newX;
 							}
-						}, function(hits) {
-							
-							if (hits.length === 0 && !(cellX !== scope.client.cellX && cellY !== scope.client.cellY)) {
-								if (cellX >= 0 && cellX < scope.level.gridCount) {
-									scope.client.cellX = cellX;
-								}
 
-								if (cellY >= 0 && cellY < scope.level.gridCount) {
-									scope.client.cellY = cellY;
-								}
-
-								scope.$apply();
+							if (newY >= 0 && newY < scope.level.gridCount) {
+								scope.client.cellY = newY;
 							}
-						});
-					}
-				};
 
-				var upFunc = function(e) {
-					hmEl.off('panmove', moveFunc);
-					hmEl.off('panend', upFunc);
-				};
-// paning is a little buggy
-				// hmEl.on('panstart', function(e) {
-				// 	levelOffset = $('#level_content').offset();
-				// 	tempCellX = scope.client.cellX;
-				// 	tempCellY = scope.client.cellY;
+							switch(result.cls) {
+								case 'power':
+								case 'health':
+									if (result.path === 'active') {
+										valUp(result.cls);
+										result.path = true;
+									}
+									break;
+								case 'diode':
+									valUp('diode');
+									result.path = true;
+									break;
+							}
 
-				// 	hmEl.on('panmove', moveFunc);
-				// 	hmEl.on('panend', upFunc);
-				// });
+							scope.$apply();
+						}
+					});
+				}
 
-				hmEl.on('tap', function(e) {
+//figure out why pan is so wonky
+				hmEl.on('panup', function(e) {
+					var distance = Math.round(e.distance/(scope.level.gridSize*4));
+					doMove(scope.client.cellX, scope.client.cellY - distance);
+				});
+
+				hmEl.on('pandown', function(e) {
+					var distance = Math.round(e.distance/(scope.level.gridSize*4));
+					doMove(scope.client.cellX, scope.client.cellY + distance);
+				});
+
+				hmEl.on('panleft', function(e) {
+					var distance = Math.round(e.distance/(scope.level.gridSize*4));
+					doMove(scope.client.cellX - distance, scope.client.cellY);
+				});
+
+				hmEl.on('panright', function(e) {
+					var distance = Math.round(e.distance/(scope.level.gridSize*4));
+					doMove(scope.client.cellX + distance, scope.client.cellY);
+				});
+
+				hmEl.on('press', function(e) {
 					if (e.target.id === scope.client.id) {
 						if (scope.client.actions > 0) {
 							var dimension = scope.client.power*scope.level.gridSize;
@@ -791,37 +821,31 @@ angular.module('myApp.directives', []).
 					} else {
 						var cell = getCell(e.center.x, e.center.y);
 						
-						utils.hitMoveTest({
-							oldX : scope.client.cellX,
-							oldY : scope.client.cellY,
-							newX : cell.x,
-							newY : cell.y,
-							grids : [scope.level.bits, scope.level.actions],
-							ignore : {
-								path : true
-							}
-						}, function(hits) {
-							if (hits.length === 0 && !(cell.x !== scope.client.cellX && cell.y !== scope.client.cellY)) {
-								if (cell.x >= 0 && cell.x < scope.level.gridCount) {
-									scope.client.cellX = cell.x;
-								}
-
-								if (cell.y >= 0 && cell.y < scope.level.gridCount) {
-									scope.client.cellY = cell.y;
-								}
-
-								scope.$apply();
-							}
-						});
+						doMove(cell.x, cell.y);
 					}
 				});
 
 				$rootScope.$on('actionHit', function(e, data) {	
-					var hitIdx;
+					//var hitIdx;
 				
 					if (data.hit.type === 'bit' && data.hit.cls !== 'static') {
-						hitIdx = scope.level.bits.indexOf(data.hit);
-						scope.level.bits[hitIdx].path = true;
+						//hitIdx = scope.level.bits.indexOf(data.hit);
+						switch(data.hit.cls) {
+							case 'power':
+							case 'health':
+								if (data.hit.path !== 'active') {
+									data.hit.path = 'active';
+								} else {
+									data.hit.path = true;
+								}
+								break;
+							case 'diode':
+								data.hit.path = true;
+								break;
+							case 'destructible':
+								data.hit.path = true;
+								break;
+						}
 					}
 
 					if (data.hit.type === 'player') {

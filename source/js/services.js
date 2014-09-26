@@ -77,12 +77,15 @@ angular.module('myApp.services', []).
 						o = grid[i];
 
 						if (isCellMatch(data, o)) {
+							callback(o);
 							hits.push(o);
 						}
 					}
 				}
 
-				callback(hits);
+				if (hits.length === 0) {
+					callback(false);
+				}
 			},
 
 			hitTest : function(data, callback) {
