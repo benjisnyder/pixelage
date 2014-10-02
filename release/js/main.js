@@ -688,17 +688,20 @@ angular.module('myApp.directives', []).
 					actionStyle = '';
 
 
-				var horizontal = new Hammer.Pan({
-				    event: 'panh',
-				    direction: Hammer.DIRECTION_HORIZONTAL
-				});
-				var vertical = new Hammer.Pan({
-				    event: 'panv',
-				    direction: Hammer.DIRECTION_VERTICAL
-				});
-				vertical.requireFailure(horizontal);
+				// var horizontal = new Hammer.Pan({
+				//     event: 'panh',
+				//     direction: Hammer.DIRECTION_HORIZONTAL
+				// });
+				// var vertical = new Hammer.Pan({
+				//     event: 'panv',
+				//     direction: Hammer.DIRECTION_VERTICAL
+				// });
+				// vertical.requireFailure(horizontal);
 
-				hmEl.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+				hmEl.get('pan').set({ 
+					direction: Hammer.DIRECTION_ALL,
+					time : 0
+				 });
 				hmEl.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
 				hmEl.get('press').set({ time: 0 });
 
@@ -772,32 +775,58 @@ angular.module('myApp.directives', []).
 							}
 
 							scope.$apply();
+							console.log('----doMove---');
+							console.log(scope.client.cellX);
 						}
 					});
 				}
 
-//figure out why pan is so wonky
+				function setBaseLines() {console.log(scope.client.cellX);
+					tempCellX = scope.client.cellX;
+					tempCellY = scope.client.cellY;
+				}
+
+				function doPan(e, axis, direction) {
+					var xy = axis === 'x' ? tempCellX : tempCellY,
+						distance = Math.round(e.distance/scope.level.gridSize);
+					//console.log(xy);
+					if (direction === 'up' || direction === 'left') {
+						distance = xy - distance;
+					} else {
+						distance = xy + distance;
+					}
+
+					if (distance >= 0 && distance <= scope.level.gridCount) {
+						if (axis === 'x' && (distance !== scope.client.cellX)) {
+							doMove(distance, tempCellY);
+						} else if (distance !== scope.client.cellY) {
+							doMove(tempCellX, distance);
+						}
+					}
+				}
+
+				hmEl.on('panstart', function(e) {
+					setBaseLines();
+				});
+
+
 				hmEl.on('panup', function(e) {
-					var distance = Math.round(e.distance/(scope.level.gridSize*4));
-					doMove(scope.client.cellX, scope.client.cellY - distance);
+					doPan(e, 'y', 'up');
 				});
 
 				hmEl.on('pandown', function(e) {
-					var distance = Math.round(e.distance/(scope.level.gridSize*4));
-					doMove(scope.client.cellX, scope.client.cellY + distance);
+					doPan(e, 'y', 'down');
 				});
 
 				hmEl.on('panleft', function(e) {
-					var distance = Math.round(e.distance/(scope.level.gridSize*4));
-					doMove(scope.client.cellX - distance, scope.client.cellY);
+					doPan(e, 'x', 'left');
 				});
 
 				hmEl.on('panright', function(e) {
-					var distance = Math.round(e.distance/(scope.level.gridSize*4));
-					doMove(scope.client.cellX + distance, scope.client.cellY);
+					doPan(e, 'x', 'right');
 				});
 
-				hmEl.on('press', function(e) {
+				hmEl.on('tap', function(e) {
 					if (e.target.id === scope.client.id) {
 						if (scope.client.actions > 0) {
 							var dimension = scope.client.power*scope.level.gridSize;
